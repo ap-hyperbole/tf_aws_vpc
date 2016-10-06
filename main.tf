@@ -16,6 +16,16 @@ resource "aws_internet_gateway" "mod" {
   }
 }
 
+resource "aws_eip" "mod" {
+  vpc = true
+}
+
+resource "aws_nat_gateway" "mod" {
+  subnet_id     = "${aws_subnet.public.0.id}"
+  allocation_id = "${aws_eip.mod.id}"
+  depends_on    = ["aws_internet_gateway.mod"]
+}
+
 resource "aws_route_table" "public" {
   vpc_id           = "${aws_vpc.mod.id}"
   propagating_vgws = ["${var.public_propagating_vgws}"]
@@ -38,6 +48,12 @@ resource "aws_route_table" "private" {
   tags {
     Name = "${var.name}-private"
   }
+}
+
+resource "aws_route" "private_nat_gateway" {
+  route_table_id         = "${aws_route_table.private.id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = "${aws_nat_gateway.mod.id}"
 }
 
 resource "aws_subnet" "private" {

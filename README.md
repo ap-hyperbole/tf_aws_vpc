@@ -49,6 +49,7 @@ Outputs
  - `public_subnets` - list of public subnet ids
  - `public_route_table_id` - public route table id string
  - `private_route_table_id` - private route table id string
+ - `nat_gateway_public_ip` - public address of the EIP associated with a NAT gateway
 
 Authors
 =======
